@@ -1,0 +1,8 @@
+{
+  "name": "news-bot",
+  "type": "module",
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "openai": "^4.0.0"
+  }
+}
