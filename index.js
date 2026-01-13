@@ -1,24 +1,23 @@
-import fetch from "node-fetch";
+import { handleTelegramUpdates } from './src/bot.js';
+import { getNews } from './src/news.js';
+import { sendMessage } from './src/send.js';
+import { loadUsers } from './src/userStore.js';
+import { buildMessage } from './src/utils.js';
 
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const MODE = process.env.MODE || 'cron';
+const CURRENT_HOUR = new Date().getHours();
 
-if (!TOKEN || !CHAT_ID) {
-  console.error("❌ Faltan variables de entorno");
-  process.exit(1);
+if (MODE === 'bot') {
+  await handleTelegramUpdates();
+} else {
+  const users = loadUsers();
+
+  for (const chatId in users) {
+    const user = users[chatId];
+    if (user.hour !== CURRENT_HOUR) continue;
+
+    const news = await getNews(user);
+    const message = buildMessage(news);
+    await sendMessage(chatId, message);
+  }
 }
-
-const text = "📰 Daily News Bot funcionando correctamente 🚀";
-
-const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-
-await fetch(url, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    chat_id: CHAT_ID,
-    text,
-  }),
-});
-
-console.log("✅ Mensaje enviado a Telegram");

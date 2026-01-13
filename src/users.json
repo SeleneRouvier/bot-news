@@ -1,6 +1,7 @@
 {
   "1777759089": {
-    "hour": "15",
-    "topics": ["argentina", "economia", "mundo"]
+    "hour": 9,
+    "topics": ["general", "technology", "business"],
+    "priority": ["ar", "world"]
   }
 }
